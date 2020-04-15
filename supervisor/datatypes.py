@@ -91,7 +91,7 @@ class Automatic:
 LOGFILE_NONES = ('none', 'off', None)
 LOGFILE_AUTOS = (Automatic, 'auto')
 
-def logfile_name(val):
+def logfile_name(val, create=False):
     if hasattr(val, 'lower'):
         coerced = val.lower()
     else:
@@ -102,7 +102,7 @@ def logfile_name(val):
     elif coerced in LOGFILE_AUTOS:
         return Automatic
     else:
-        return existing_dirpath(val)
+        return existing_dirpath(val, create=create)
 
 class RangeCheckedConversion:
     """Conversion helper that range checks another conversion."""
@@ -333,19 +333,25 @@ def octal_type(arg):
     except (TypeError, ValueError):
         raise ValueError('%s can not be converted to an octal type' % arg)
 
-def existing_directory(v):
+def existing_directory(v, create=False):
     nv = os.path.expanduser(v)
     if os.path.isdir(nv):
         return nv
+    if create:
+        os.makedirs(nv)
+        return nv
     raise ValueError('%s is not an existing directory' % v)
 
-def existing_dirpath(v):
+def existing_dirpath(v, create=False):
     nv = os.path.expanduser(v)
     dir = os.path.dirname(nv)
     if not dir:
         # relative pathname with no directory component
         return nv
     if os.path.isdir(dir):
+        return nv
+    if create:
+        os.makedirs(dir)
         return nv
     raise ValueError('The directory named as part of the path %s '
                      'does not exist' % v)
