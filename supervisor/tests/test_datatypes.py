@@ -232,7 +232,7 @@ class LogfileNameTests(unittest.TestCase):
 
     def test_returns_existing_dirpath_for_other_values(self):
         func = datatypes.existing_dirpath
-        datatypes.existing_dirpath = lambda path: path
+        datatypes.existing_dirpath = lambda path, create=False: path
         try:
             path = '/path/to/logfile/With/Case/Preserved'
             actual = self._callFUT(path)

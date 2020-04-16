@@ -409,6 +409,7 @@ class ServerOptions(Options):
     unlink_pidfile = False
     unlink_socketfiles = False
     mood = states.SupervisorStates.RUNNING
+    create_missingdirs = False
 
     def __init__(self):
         Options.__init__(self)
@@ -422,9 +423,9 @@ class ServerOptions(Options):
         self.add("umask", "supervisord.umask", "m:", "umask=",
                  octal_type, default='022')
         self.add("directory", "supervisord.directory", "d:", "directory=",
-                 self.existing_directory)
+                 existing_directory)
         self.add("logfile", "supervisord.logfile", "l:", "logfile=",
-                 self.existing_dirpath, default="supervisord.log")
+                 existing_dirpath, default="supervisord.log")
         self.add("logfile_maxbytes", "supervisord.logfile_maxbytes",
                  "y:", "logfile_maxbytes=", byte_size,
                  default=50 * 1024 * 1024) # 50MB
@@ -433,11 +434,11 @@ class ServerOptions(Options):
         self.add("loglevel", "supervisord.loglevel", "e:", "loglevel=",
                  logging_level, default="info")
         self.add("pidfile", "supervisord.pidfile", "j:", "pidfile=",
-                 self.existing_dirpath, default="supervisord.pid")
+                 existing_dirpath, default="supervisord.pid")
         self.add("identifier", "supervisord.identifier", "i:", "identifier=",
                  str, default="supervisor")
         self.add("childlogdir", "supervisord.childlogdir", "q:", "childlogdir=",
-                 self.existing_directory, default=tempfile.gettempdir())
+                 existing_directory, default=tempfile.gettempdir())
         self.add("minfds", "supervisord.minfds",
                  "a:", "minfds=", int, default=1024)
         self.add("minprocs", "supervisord.minprocs",
@@ -465,13 +466,13 @@ class ServerOptions(Options):
         self.exit(0)
 
     def existing_dirpath(self, path):
-        return existing_dirpath(path, create=self.create_missing_dirs)
+        return existing_dirpath(path, create=self.create_missingdirs)
 
     def existing_directory(self, path):
-        return existing_directory(path, create=self.create_missing_dirs)
+        return existing_directory(path, create=self.create_missingdirs)
 
     def get_logfile_name(self, path):
-        return logfile_name(path, create=self.create_missing_dirs)
+        return logfile_name(path, create=self.create_missingdirs)
 
     # TODO: not covered by any test, but used by dispatchers
     def getLogger(self, *args, **kwargs):
